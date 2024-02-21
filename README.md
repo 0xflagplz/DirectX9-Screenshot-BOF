@@ -7,7 +7,7 @@ The screenshots are exported to the current working directory and saved as a .lo
 
 Output: <width>oo<height>.log
 
-![Cobalt Strike Example]([http://url/to/img.png](https://github.com/AchocolatechipPancake/DirectX9-Screenshot-BOF/blob/main/img/cobalt-test.png)https://github.com/AchocolatechipPancake/DirectX9-Screenshot-BOF/blob/main/img/cobalt-test.png)
+![Cobalt Strike Example](/img/cobalt-test.png)
 
 
 Reconstruct into PNG Locally
