@@ -38,3 +38,6 @@ To reconstruct the image with this script, follow these steps:
     python3 assemble.py <logfile> output.png
     ```
 
+### Contributers
+Big thanks to ma boy Kyle started this and listened to me rage
+@kyle41111
