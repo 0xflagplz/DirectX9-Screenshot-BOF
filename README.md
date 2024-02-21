@@ -23,6 +23,7 @@ beacon> download <filename>
 
 ![Cobalt Strike Example](/img/cobalt-test.png)
 
+![AutoDownload Example](/img/auto-download.png)
 ## Image Reconstruction
 
 To reconstruct the image with this script, follow these steps:
