@@ -6,16 +6,6 @@
 
 #define RELEASE(x) if (x) { x->lpVtbl->Release(x); x = NULL; }
 
-
-void deleteFile(const char* fileName) {
-    if (!KERNEL32$DeleteFileW(fileName)) {
-        MSVCRT$printf("Failed to delete file: %s\n", fileName);
-    } else {
-        MSVCRT$printf("File deleted successfully: %s\n", fileName);
-    }
-}
-
-
 // From Memfiles BOF https://github.com/Octoberfest7/MemFiles
 void downloadFile(char* fileName, int downloadFileNameLength, char* returnData, int fileSize)
 {
