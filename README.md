@@ -5,7 +5,7 @@ Screenshots taken with DirectX // COM Libraries
 
 The screenshots are exported to the current working directory and saved as a .log file.
 
-Output: <width>oo<height>.log
+Output Format: \<width>\oo<height>.log
 
 ![Cobalt Strike Example](/img/cobalt-test.png)
 
