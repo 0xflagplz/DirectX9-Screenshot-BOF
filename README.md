@@ -12,7 +12,7 @@ TBH I haven't tested this too much just seemed like a cool idea
 - Reconstruct `.log` files into PNG format locally
 - Libraries Used - MSVCRT, OLE32, D3D9
 
-- Just swap the output file to .tmp and recompile if preferred 
+- Just swap the output file to .tmp in SavePixelsToLogFile and recompile if preferred 
 
 ### BOF Execution
 
