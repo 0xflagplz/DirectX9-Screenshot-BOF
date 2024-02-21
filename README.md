@@ -9,6 +9,7 @@ Capture Screenshots with DirectX 9
 - Export screenshots to the **current working directory** as `.log` files
 - Output format: `<width>oo<height>.log`
 - Reconstruct `.log` files into PNG format locally
+- Libraries Used - MSVCRT, OLE32, D3D9
 
 ### BOF Execution
 
