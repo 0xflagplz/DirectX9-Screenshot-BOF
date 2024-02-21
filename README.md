@@ -41,5 +41,5 @@ To reconstruct the image with this script, follow these steps:
     ```
 
 ### Contributers
-Big thanks to ma boy Kyle started this and listened to me rage
+Big thanks to ma boy Kyle started this
 @kyle41111
