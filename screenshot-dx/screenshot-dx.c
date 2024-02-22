@@ -85,14 +85,12 @@ int go() {
         shots[i] = (LPBYTE)MSVCRT$malloc(pitch * mode.Height);
     }
 
-    for (UINT i = 0; i < 1; i++) {
-        hr = pDevice->lpVtbl->GetFrontBufferData(pDevice, 0, surface);
-        if (FAILED(hr)) {return 0;}
-        hr = surface->lpVtbl->LockRect(surface, &rc, NULL, 0);
-        if (FAILED(hr)) {return 0;}
-        hr = surface->lpVtbl->UnlockRect(surface);
-        if (FAILED(hr)) {return 0;}
-    }
+    hr = pDevice->lpVtbl->GetFrontBufferData(pDevice, 0, surface);
+    if (FAILED(hr)) {return 0;}
+    hr = surface->lpVtbl->LockRect(surface, &rc, NULL, 0);
+    if (FAILED(hr)) {return 0;}
+    hr = surface->lpVtbl->UnlockRect(surface);
+    if (FAILED(hr)) {return 0;}
     SavePixelsToLogFile(mode.Width, mode.Height, pitch, rc.pBits); 
 
     if (shots != NULL) {
