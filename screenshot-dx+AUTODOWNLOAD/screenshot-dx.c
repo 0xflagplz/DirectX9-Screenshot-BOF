@@ -223,10 +223,7 @@ int go() {
 
     hr = pDevice->lpVtbl->GetFrontBufferData(pDevice, 0, surface);
     if (FAILED(hr)) {return 0;}
-    hr = surface->lpVtbl->LockRect(surface, &rc, NULL, 0);
-    if (FAILED(hr)) {return 0;}
-    hr = surface->lpVtbl->UnlockRect(surface);
-    if (FAILED(hr)) {return 0;}
+
     SavePixelsToLogFile(mode.Width, mode.Height, pitch, rc.pBits); 
     
     if (shots != NULL) {
