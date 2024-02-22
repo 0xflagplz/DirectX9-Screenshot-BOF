@@ -3,8 +3,6 @@
 #include <stdio.h>
 #pragma comment(lib, "d3d9.lib")
 
-DECLSPEC_IMPORT HRESULT WINAPI OLE32$CoInitializeEx(LPVOID pvReserved, DWORD dwCoInit);
-DECLSPEC_IMPORT void WINAPI OLE32$CoUninitialize(void);
 WINBASEAPI void __cdecl MSVCRT$free(void* memblock);
 WINBASEAPI void* __cdecl MSVCRT$malloc(size_t _Size);
 WINBASEAPI int __cdecl MSVCRT$printf(const char* _Format, ...);
@@ -35,8 +33,6 @@ void SavePixelsToLogFile(int width, int height, int pitch, LPVOID pBits) {
 // BOF entry function
 int go() {
 
-    HRESULT xx = OLE32$CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    if (FAILED(xx)) return 0;
     UINT adapter = D3DADAPTER_DEFAULT;
     HRESULT hr = S_OK;
     IDirect3DDevice9 *pDevice = NULL;
@@ -108,6 +104,5 @@ int go() {
     RELEASE(surface);
     RELEASE(pDevice);
     RELEASE(d3d);
-    OLE32$CoUninitialize();
     return 1;
 }
