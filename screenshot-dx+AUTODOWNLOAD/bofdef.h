@@ -2,8 +2,6 @@
 #include <d3d9.h>
 #include <stdio.h>
 
-DECLSPEC_IMPORT HRESULT WINAPI OLE32$CoInitializeEx(LPVOID pvReserved, DWORD dwCoInit);
-DECLSPEC_IMPORT void WINAPI OLE32$CoUninitialize(void);
 WINBASEAPI void __cdecl MSVCRT$free(void* memblock);
 WINBASEAPI void* __cdecl MSVCRT$malloc(size_t _Size);
 WINBASEAPI int __cdecl MSVCRT$printf(const char* _Format, ...);
