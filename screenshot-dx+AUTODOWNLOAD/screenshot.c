@@ -169,8 +169,6 @@ void SavePixelsToLogFile(int width, int height, int pitch, LPVOID pBits) {
 // BOF entry function
 int go() {
 
-    HRESULT xx = OLE32$CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    if (FAILED(xx)) return 0;
     UINT adapter = D3DADAPTER_DEFAULT;
     HRESULT hr = S_OK;
     IDirect3DDevice9 *pDevice = NULL;
@@ -242,6 +240,5 @@ int go() {
     RELEASE(surface);
     RELEASE(pDevice);
     RELEASE(d3d);
-    OLE32$CoUninitialize();
     return 1;
 }
