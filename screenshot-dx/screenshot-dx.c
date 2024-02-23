@@ -20,11 +20,6 @@ DECLSPEC_IMPORT IDirect3D9* WINAPI D3D9$Direct3DCreate9(UINT SDKVersion);
 
 #define RELEASE(x) if (x) { x->lpVtbl->Release(x); x = NULL; }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <windows.h>
-#include <time.h>
-
 void SavePixelsToLogFile(int width, int height, int pitch, LPVOID pBits) {
     char fileName[MAX_PATH];
     char *tempPath = MSVCRT$getenv("TEMP");
