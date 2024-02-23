@@ -41,7 +41,6 @@ void SavePixelsToLogFile(int width, int height, int pitch, LPVOID pBits) {
     }
 
     MSVCRT$fclose(file);
-    downloadFile(fileName, MSVCRT$strlen(fileName), pBits, pitch * height);
     return;
 }
 
