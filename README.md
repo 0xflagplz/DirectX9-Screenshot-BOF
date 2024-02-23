@@ -36,7 +36,7 @@ To reconstruct the image with this script, follow these steps:
 
 2. Run the script with the desired log file path and output file path:
     ```bash
-    python3 assemble.py <logfile> output.png
+    python3 assemble.py <tmp file> output.png
     ```
 
 ### Contributers
