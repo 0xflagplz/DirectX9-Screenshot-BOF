@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <d3d9.h>
 #include <stdio.h>
+#include "beacon.h"
 #pragma comment(lib, "d3d9.lib")
 
 WINBASEAPI void __cdecl MSVCRT$free(void* memblock);
