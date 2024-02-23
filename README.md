@@ -7,12 +7,10 @@ TBH I haven't tested this too much just seemed like a cool idea
 
 ## Notes
 
-- Export screenshots to the **current working directory** as `.log` files
-- Output format: `<width>oo<height>.log`
+- Export screenshots to **%TEMP%** or the **current working directory** as `.tmp` files
+- Output format: `<width>oo<height>.tmp`
 - Reconstruct `.log` files into PNG format locally
 - Libraries Used - MSVCRT, D3D9
-
-- Just swap the output file to .tmp in SavePixelsToLogFile and recompile if preferred 
 
 ### BOF Execution
 
